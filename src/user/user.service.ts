@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-@Injectable()//标记为可注入的服务
+import {CreateAdminDto} from './createAdmin';
+@Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)//注入User实体的Repository对象
@@ -34,11 +35,13 @@ export class UserService {
         return { users, total };
     }
 
-    async createUser(body: { name: string ,password:string}) {
+    async createUser(body: { name: string ,password:string,email:string}) {
         const hashPassword=await bcrypt.hash(body.password,10);
         const newUser={
             name:body.name,
             password:hashPassword,
+            role:'user',
+            email:body.email,
         }
         return await this.userRepository.save(newUser);
 
@@ -56,5 +59,12 @@ export class UserService {
         if(!user)throw new NotFoundException('用户不存在');
         return await this.userRepository.remove(user);
     }
-    
+async createAdmin(dto:CreateAdminDto)
+{
+    const user=new User();
+    user.name=dto.name;
+    user.password=await bcrypt.hash(dto.password,10);
+    user.email=dto.email;
+    user.role='admin';
+    return await this.userRepository.save(user);
 }

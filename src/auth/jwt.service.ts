@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 @Injectable()
+//CanActivate接口是NestJS中用于定义守卫的接口，守卫是一种特殊的类，用于在请求处理之前进行权限验证或其他逻辑处理
 export class JwtAuthGuard implements CanActivate{
     constructor(private jwtService:JwtService){}
     canActivate(context:ExecutionContext):boolean
